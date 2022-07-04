@@ -2,10 +2,12 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/klasrak/apigo/clients/restcountries"
+	"github.com/klasrak/apigo/httphelpers"
 )
 
 func hello(w http.ResponseWriter, r *http.Request) {
@@ -19,13 +21,8 @@ func getCountry(w http.ResponseWriter, r *http.Request) {
 	name := chi.URLParam(r, "name")
 
 	if name == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Header().Set("content-type", "application/json")
-		w.Write([]byte(`
-			{
-				"error": "invalid name provided"
-			}
-		`))
+
+		httphelpers.BadRequest(w, errors.New("missing name"))
 		return
 	}
 
